@@ -57,6 +57,68 @@ namespace FavoriteRestaurants
       return allCuisines;
     }
 
+    public List<Restaurant> GetRestaurants()
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("SELECT * FROM restaurant_list WHERE cuisine_id = @CuisineId", conn);
+      SqlParameter cuisineIdParameter = new SqlParameter("@CuisineId", this.GetId());
+      cmd.Parameters.Add(cuisineIdParameter);
+      SqlDataReader rdr = cmd.ExecuteReader();
+
+      List<Restaurant> restaurants = new List<Restaurant>{};
+      while(rdr.Read())
+      {
+        int restaurantId = rdr.GetInt32(0);
+        string restaurantName = rdr.GetString(1);
+        bool alchohol = rdr.GetBoolean(2);
+        int cuisineId = rdr.GetInt32(3);
+        Restaurant newRestaurant = new Restaurant(restaurantName, alchohol, cuisineId, restaurantId);
+        restaurants.Add(newRestaurant);
+      }
+      if (rdr != null)
+      {
+        rdr.Close();
+      }
+      if (conn != null)
+      {
+        conn.Close();
+      }
+      return restaurants;
+    }
+
+    public static Cuisine Find(int id)
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("SELECT * FROM cuisine_list WHERE id=@CuisineId;", conn);
+      SqlParameter cuisineIdParameter = new SqlParameter("@CuisineId", id.ToString());
+      cmd.Parameters.Add(cuisineIdParameter);
+      SqlDataReader rdr = cmd.ExecuteReader();
+
+      int foundCuisineId = 0;
+      string foundCuisineType = null;
+
+      while(rdr.Read())
+      {
+        foundCuisineId = rdr.GetInt32(0);
+        foundCuisineType = rdr.GetString(1);
+      }
+      Cuisine foundCuisine = new Cuisine(foundCuisineType, foundCuisineId);
+
+      if(rdr != null)
+      {
+        rdr.Close();
+      }
+      if(conn != null)
+      {
+        conn.Close();
+      }
+      return foundCuisine;
+    }
+
     public void Save()
     {
       SqlConnection conn = DB.Connection();

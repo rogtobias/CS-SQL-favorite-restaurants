@@ -12,6 +12,7 @@ namespace FavoriteRestaurants
     {
       DBConfiguration.ConnectionString = "Data Source=(localdb)\\mssqllocaldb;Initial Catalog=restaurants_test;Integrated Security=SSPI;";
     }
+
     [Fact]
     public void Test_CuisineDBEmpty()
     {
@@ -20,6 +21,7 @@ namespace FavoriteRestaurants
       //assert
       Assert.Equal(0, result);
     }
+
     [Fact]
     public void Test_Equal_ReturnsTheSame()
     {
@@ -29,6 +31,7 @@ namespace FavoriteRestaurants
       //Assert
       Assert.Equal(firstCuisine, secondCuisine);
     }
+
     [Fact]
     public void Test_Save_SavesCuisineToDb()
     {
@@ -40,6 +43,37 @@ namespace FavoriteRestaurants
       List<Cuisine> testList = new List<Cuisine> {testCuisine};
       //Assert
       Assert.Equal(result, testList);
+    }
+
+    [Fact]
+    public void Test_Find_FindCuisineInDB()
+    {
+      //arrange, act
+      Cuisine testCuisine = new Cuisine("Spanish");
+      testCuisine.Save();
+
+      Cuisine foundCuisine = Cuisine.Find(testCuisine.GetId());
+      //assert
+      Assert.Equal(foundCuisine, testCuisine);
+    }
+
+    [Fact]
+    public void Test_GetRestaurants_RetrievesAllRestaurantsInCuisineType()
+    {
+      //arrange, act
+      Cuisine testCuisine = new Cuisine("Spanish");
+      testCuisine.Save();
+
+      Restaurant firstRestaurant = new Restaurant("Mom's", false, testCuisine.GetId());
+      firstRestaurant.Save();
+
+      Restaurant secondRestaurant = new Restaurant("Dad's", true, testCuisine.GetId());
+      secondRestaurant.Save();
+
+      List<Restaurant> testRestaurantList = new List<Restaurant> {firstRestaurant, secondRestaurant};
+      List<Restaurant> resultRestaurantList = testCuisine.GetRestaurants();
+      //assert
+      Assert.Equal(resultRestaurantList, testRestaurantList);
     }
 
     public void Dispose()
