@@ -8,10 +8,10 @@ namespace FavoriteRestaurants
   {
     private int _id;
     private string _name;
-    private int _alchohol;
+    private bool _alchohol;
     private int _cuisineId;
 
-    public Restaurant(string Name, int Alchohol, int CuisineId, int Id=0)
+    public Restaurant(string Name, bool Alchohol, int CuisineId, int Id=0)
     {
       _name = Name;
       _alchohol = Alchohol;
@@ -31,7 +31,7 @@ namespace FavoriteRestaurants
     {
       return _name;
     }
-    public int GetAlchohol()
+    public bool GetAlchohol()
     {
       return _alchohol;
     }
@@ -47,7 +47,7 @@ namespace FavoriteRestaurants
     {
       _name = newName;
     }
-    public void SetAlchohol(int newAlchohol)
+    public void SetAlchohol(bool newAlchohol)
     {
       _alchohol = newAlchohol;
     }
@@ -66,7 +66,40 @@ namespace FavoriteRestaurants
         return (idEquality && nameEquality);
       }
     }
-    
+
+    public void Save()
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("INSERT INTO restaurant_list (name, alchohol, cuisine_id) OUTPUT INSERTED.id VALUES (@RestaurantName, @Alchohol, @CuisineId);", conn);
+
+      SqlParameter nameParameter = new SqlParameter("@RestaurantName", this.GetName());
+
+      SqlParameter alchoholParameter = new SqlParameter("@Alchohol", this.GetAlchohol());
+
+      SqlParameter cuisineIdParameter = new SqlParameter("@CuisineId", this.GetCuisineId());
+
+      cmd.Parameters.Add(nameParameter);
+      cmd.Parameters.Add(alchoholParameter);
+      cmd.Parameters.Add(cuisineIdParameter);
+
+      SqlDataReader rdr = cmd.ExecuteReader();
+
+      while(rdr.Read())
+      {
+        this._id = rdr.GetInt32(0);
+      }
+      if(rdr != null)
+      {
+        rdr.Close();
+      }
+      if(conn != null)
+      {
+        conn.Close();
+      }
+    }
+
     public static List<Restaurant> GetAll()
     {
       List<Restaurant> allRestaurants = new List<Restaurant> {};
@@ -81,9 +114,10 @@ namespace FavoriteRestaurants
       {
         int restaurantId = rdr.GetInt32(0);
         string restaurantName = rdr.GetString(1);
-        int alchohol = rdr.GetInt32(2);
+        bool alchohol = rdr.GetBoolean(2);
         int cuisineId = rdr.GetInt32(3);
         Restaurant newRestaurant = new Restaurant(restaurantName, alchohol, cuisineId, restaurantId);
+        allRestaurants.Add(newRestaurant);
       }
        if(rdr != null)
        {

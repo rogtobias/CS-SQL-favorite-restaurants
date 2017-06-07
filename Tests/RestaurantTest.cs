@@ -26,10 +26,23 @@ namespace FavoriteRestaurants
     public void Test_Equal_ReturnsTrueIfSameName()
     {
       //arrange, act
-      Restaurant firstRestaurant = new Restaurant("InNOut", 0, 0);
-      Restaurant secondRestaurant = new Restaurant("InNOut", 0, 0);
+      Restaurant firstRestaurant = new Restaurant("InNOut", false, 0);
+      Restaurant secondRestaurant = new Restaurant("InNOut", false, 0);
       //assert
       Assert.Equal(firstRestaurant, secondRestaurant);
+    }
+
+    [Fact]
+    public void Test_Save_Works()
+    {
+      //arrange, act
+      Restaurant testRestaurant = new Restaurant("InNOut", false, 0);
+
+      testRestaurant.Save();
+      List<Restaurant> result = Restaurant.GetAll();
+      List<Restaurant> testList = new List<Restaurant> {testRestaurant};
+      //assert
+      Assert.Equal(testList, result);
     }
 
     public void Dispose()
