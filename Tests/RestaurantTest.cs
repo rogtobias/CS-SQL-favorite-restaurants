@@ -45,6 +45,18 @@ namespace FavoriteRestaurants
       Assert.Equal(testList, result);
     }
 
+    [Fact]
+    public void Test_Find_FindsRestaurantinDB()
+    {
+      //arrange, act
+      Restaurant testRestaurant = new Restaurant("InNOut", false, 0);
+      testRestaurant.Save();
+
+      Restaurant foundRestaurant = Restaurant.Find(testRestaurant.GetId());
+      //assert
+      Assert.Equal(testRestaurant, foundRestaurant);
+    }
+
     public void Dispose()
     {
       Restaurant.DeleteAll();

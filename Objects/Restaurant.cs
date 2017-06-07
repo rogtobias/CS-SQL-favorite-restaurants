@@ -52,19 +52,40 @@ namespace FavoriteRestaurants
       _alchohol = newAlchohol;
     }
 
-    public override bool Equals(System.Object otherRestaurant)
+    public static Restaurant Find(int id)
     {
-      if (!(otherRestaurant is Restaurant))
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("SELECT * FROM restaurant_list WHERE id=@RestaurantId;", conn);
+      SqlParameter restaurantIdParameter = new SqlParameter("@RestaurantId", id.ToString());
+      cmd.Parameters.Add(restaurantIdParameter);
+      SqlDataReader rdr = cmd.ExecuteReader();
+
+      int foundRestaurantId = 0;
+      string foundRestaurantName = null;
+      bool foundAlchohol = false;
+      int foundCuisineId = 0;
+
+      while(rdr.Read())
       {
-        return false;
+        foundRestaurantId = rdr.GetInt32(0);
+        foundRestaurantName = rdr.GetString(1);
+        foundAlchohol = rdr.GetBoolean(2);
+        foundCuisineId = rdr.GetInt32(3);
       }
-      else
-      {
-        Restaurant newRestaurant = (Restaurant) otherRestaurant;
-        bool idEquality = (this.GetId() == newRestaurant.GetId());
-        bool nameEquality = (this.GetName() == newRestaurant.GetName());
-        return (idEquality && nameEquality);
-      }
+      Restaurant foundRestaurant = new Restaurant(foundRestaurantName, foundAlchohol, foundCuisineId, foundRestaurantId);
+
+      if (rdr != null)
+     {
+       rdr.Close();
+     }
+     if (conn != null)
+     {
+       conn.Close();
+     }
+
+     return foundRestaurant;
     }
 
     public void Save()
@@ -137,6 +158,21 @@ namespace FavoriteRestaurants
       SqlCommand cmd = new SqlCommand("DELETE FROM restaurant_list;", conn);
       cmd.ExecuteNonQuery();
       conn.Close();
+    }
+
+    public override bool Equals(System.Object otherRestaurant)
+    {
+      if (!(otherRestaurant is Restaurant))
+      {
+        return false;
+      }
+      else
+      {
+        Restaurant newRestaurant = (Restaurant) otherRestaurant;
+        bool idEquality = (this.GetId() == newRestaurant.GetId());
+        bool nameEquality = (this.GetName() == newRestaurant.GetName());
+        return (idEquality && nameEquality);
+      }
     }
   }
 }
