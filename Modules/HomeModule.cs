@@ -53,6 +53,10 @@ namespace FavoriteRestaurants
         Restaurant.DeleteAll();
         return View["cleared.cshtml"];
       };
+      Post["/cuisine/clear"] = _ => {
+        Cuisine.DeleteAll();
+        return View["cleared.cshtml"];
+      };
       Get["cuisine/edit/{id}"] = parameters => {
         Cuisine SelectedCuisine = Cuisine.Find(parameters.id);
         return View["cuisine_edit.cshtml", SelectedCuisine];
@@ -69,6 +73,17 @@ namespace FavoriteRestaurants
       {
         Cuisine SelectedCuisine = Cuisine.Find(parameters.id);
         SelectedCuisine.Update(Request.Form["cuisine-type"]);
+        return View["success.cshtml"];
+      };
+      Get["cuisine/delete/{id}"] = parameters =>
+      {
+        Cuisine SelectedCuisine = Cuisine.Find(parameters.id);
+        return View["cuisine_delete.cshtml", SelectedCuisine];
+      };
+      Delete["cuisine/delete/{id}"] = parameters =>
+      {
+        Cuisine SelectedCuisine = Cuisine.Find(parameters.id);
+        SelectedCuisine.Delete();
         return View["success.cshtml"];
       };
     }

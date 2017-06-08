@@ -2,8 +2,8 @@
 <form action="/restaurants/new" method="post">
   <label for="restaurant-name">Restaurant Name</label>
   <input type="text" name="restaurant-name" id="restaurant-name">
-  <h3>Does this restaurant serve alchohol?</h3>
-  <label for="restaurant-aclhohol">
+  <h3>Does this restaurant serve alcohol?</h3>
+  <label>
     <input type="radio" name="restaurant-alchohol" value="True"> Yes
   </label>
   <label>
@@ -11,9 +11,16 @@
   </label>
   <br><br>
   <select name="cuisine-id">
-    @foreach(var cuisine in Model)
+    if(Model == 0)
     {
-      <option value="@cuisine.GetId()">@cuisine.GetCuisineType()</option>
+      <option value="Unknown">Unknown</option>
+    }
+    else 
+    {
+      @foreach(var cuisine in Model)
+      {
+        <option value="@cuisine.GetId()">@cuisine.GetCuisineType()</option>
+      }
     }
   </select>
   <br><br>

@@ -1,27 +1,23 @@
-<h1>Type of Cuisine</h1>
+<h1>Favorite Restaurant</h1>
 
 <h2>Types of Cuisines:</h2>
   @if (@Model.Count == 0)
   {
-    <p>There are no types of cuisine.</p>
+    <p>There are no cuisine types.</p>
   }
   else
   {
     <ul>
-      @if(Model.Count != 0)
-      {
-        @foreach(var cuisine in Model)
+      @foreach(var cuisine in Model)
         {
-          <li><a href="/cuisine/@cuisine.GetId()">@cuisine.GetCuisineType()</a> | <a href="/cuisine/edit/@cuisine.GetId()">Edit</a></li>
+          <li><a href="/cuisine/@cuisine.GetId()">@cuisine.GetCuisineType()</a> | <a href="/cuisine/edit/@cuisine.GetId()">Edit</a> | <a href="/cuisine/delete/@cuisine.GetId()">Delete</a></li>
         }
-      }
     </ul>
   }
-
 
 <h4><a href="/cuisine/new">Add a new cuisine!</a></h4>
 <h4><a href="/">Return Home</a></h4>
 
-<form action="/cuisine/new" method="post">
+<form action="/cuisine/clear" method="post">
   <button type="submit" name="button">Clear all Cuisine types</button>
 </form>
