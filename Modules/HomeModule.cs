@@ -40,12 +40,12 @@ namespace FavoriteRestaurants
       Get["/restaurants/new"] = _ =>
       {
         List<Cuisine> allCuisine = Cuisine.GetAll();
-        return View["restaurant_form.cshtml"];
+        return View["restaurant_form.cshtml", allCuisine];
       };
 
       Post["/restaurants/new"] = _ =>
       {
-        Restaurant newRestaurant = new Restaurant(Request.Form["restaurant-name"],Request.Form["restaurant-alchohol"], Request.Form["cuisine-type"]);
+        Restaurant newRestaurant = new Restaurant(Request.Form["restaurant-name"],Request.Form["restaurant-alchohol"], Request.Form["cuisine-id"]);
         newRestaurant.Save();
         return View["success.cshtml"];
       };
