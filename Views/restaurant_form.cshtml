@@ -1,0 +1,21 @@
+<h1>Add a new restaurant</h1>
+<form action="/restaurants/new" method="post">
+  <label for="restaurant-name">Restaurant Name</label>
+  <input type="text" name="restaurant-name" id="restaurant-name">
+  <h1>Does this restaurant serve alchohol?</h1>
+  <label for="restaurant-aclhohol">
+    <input type="radio" name="restaurant-alchohol" value="True"> True
+  </label>
+  <label>
+    <input type="radio" name="restaurant-alchohol" value="False"> False
+  </label>
+  <select name="cuisine-id">
+    @foreach(var cuisine in Model)
+    {
+      <option value="@cuisine.GetId()">@cuisine.GetName()</option>
+    }
+  </select>
+  <button type="submit" name="button">Add new Restaurant</button>
+</form>
+<p><a href="/">Back home</a></p>
+<p><a href="/restaurants">View all restaurants</a></p>
