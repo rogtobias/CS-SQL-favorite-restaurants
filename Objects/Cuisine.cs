@@ -144,6 +144,38 @@ namespace FavoriteRestaurants
       }
     }
 
+    public void Update(string newType)
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("UPDATE cuisine_list SET type = @NewType OUTPUT INSERTED.type WHERE id = @CuisineId;", conn);
+
+      SqlParameter newTypeParameter = new SqlParameter("@NewType", newType);
+      // newTypeParameter.ParameterType = "@newType";
+      // newTypeParameter.Value = newType;
+      cmd.Parameters.Add(newTypeParameter);
+
+      SqlParameter cuisineIdParameter = new SqlParameter("@CuisineId", this.GetId());
+      // cuisineIdParameter.ParameterType = "@CuisineId";
+      // cuisineIdParameter.Value = this.GetId();
+      cmd.Parameters.Add(cuisineIdParameter);
+      SqlDataReader rdr = cmd.ExecuteReader();
+
+      while(rdr.Read())
+      {
+        this._type = rdr.GetString(0);
+      }
+      if (rdr != null)
+      {
+        rdr.Close();
+      }
+      if (conn != null)
+      {
+        conn.Close();
+      }
+    }
+
     public static void DeleteAll()
     {
       SqlConnection conn = DB.Connection();
@@ -153,23 +185,43 @@ namespace FavoriteRestaurants
       cmd.ExecuteNonQuery();
       conn.Close();
     }
-     public override int GetHashCode()
-     {
-       return this.GetCuisineType().GetHashCode();
-     }
-     public override bool Equals(System.Object otherCuisine)
-     {
-       if(!(otherCuisine is Cuisine))
-       {
-         return false;
-       }
-       else
-       {
-         Cuisine newCuisine = (Cuisine) otherCuisine;
-         bool idEquality = this.GetId() == newCuisine.GetId();
-         bool cuisineTypeEquality = this.GetType() == newCuisine.GetType();
-         return (idEquality && cuisineTypeEquality);
-       }
-     }
+
+    public override int GetHashCode()
+    {
+      return this.GetCuisineType().GetHashCode();
+    }
+
+    public override bool Equals(System.Object otherCuisine)
+    {
+      if(!(otherCuisine is Cuisine))
+      {
+       return false;
+      }
+      else
+      {
+        Cuisine newCuisine = (Cuisine) otherCuisine;
+        bool idEquality = this.GetId() == newCuisine.GetId();
+        bool cuisineTypeEquality = this.GetType() == newCuisine.GetType();
+        return (idEquality && cuisineTypeEquality);
+      }
+    }
+
+    public void Delete()
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("DELETE FROM cuisine_list WHERE id = @CuisineId; DELETE FROM restaurant_list WHERE cuisine_id = @CuisineId;", conn);
+
+      SqlParameter cuisineIdParameter = new SqlParameter("@CuisineId", this.GetId());
+
+      cmd.Parameters.Add(cuisineIdParameter);
+      cmd.ExecuteNonQuery();
+
+      if(conn != null)
+      {
+        conn.Close();
+      }
+    }
   }
 }

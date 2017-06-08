@@ -53,6 +53,10 @@ namespace FavoriteRestaurants
         Restaurant.DeleteAll();
         return View["cleared.cshtml"];
       };
+      Get["cuisine/edit/{id}"] = parameters => {
+        Cuisine SelectedCuisine = Cuisine.Find(parameters.id);
+        return View["cuisine_edit.cshtml", SelectedCuisine];
+      };
       Get["/cuisine/{id}"] = parameters => {
         Dictionary<string, object> model = new Dictionary<string, object>();
         Cuisine selectedCuisine = Cuisine.Find(parameters.id);
@@ -60,6 +64,12 @@ namespace FavoriteRestaurants
         model.Add("cuisine", selectedCuisine);
         model.Add("restaurants", cuisineRestaurants);
         return View["cuisine.cshtml", model];
+      };
+      Patch["cuisine/edit/{id}"] = parameters =>
+      {
+        Cuisine SelectedCuisine = Cuisine.Find(parameters.id);
+        SelectedCuisine.Update(Request.Form["cuisine-type"]);
+        return View["success.cshtml"];
       };
     }
   }

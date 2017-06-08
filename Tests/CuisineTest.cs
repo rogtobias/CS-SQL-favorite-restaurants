@@ -75,6 +75,51 @@ namespace FavoriteRestaurants
       //assert
       Assert.Equal(resultRestaurantList, testRestaurantList);
     }
+    [Fact]
+    public void Test_Update_UpdatesCuisineInDatabase()
+    {
+      //Arrange
+      string type = "Spanish";
+      Cuisine testCuisine = new Cuisine(type);
+      testCuisine.Save();
+      string newType = "Pub";
+
+      //act
+      testCuisine.Update(newType);
+      string result = testCuisine.GetCuisineType();
+
+      //Assert
+      Assert.Equal(newType, result);
+    }
+    [Fact]
+    public void Test_Delete_DeletesCuisineFromDatabase()
+    {
+      //Arrange
+      string type1 = "Spanish";
+      Cuisine testCuisine1 = new Cuisine(type1);
+      testCuisine1.Save();
+
+      string type2 = "Greek";
+      Cuisine testCuisine2 = new Cuisine(type2);
+      testCuisine2.Save();
+
+      Restaurant testRestaurant1 = new Restaurant("Wendy's", false, testCuisine1.GetId());
+      testRestaurant1.Save();
+      Restaurant testRestaurant2 = new Restaurant("Taco Bell", false, testCuisine2.GetId());
+      testRestaurant2.Save();
+
+      //Act
+      testCuisine1.Delete();
+      List<Cuisine> resultCuisine = Cuisine.GetAll();
+      List<Cuisine> testCuisineList = new List<Cuisine> {testCuisine2};
+
+      List<Restaurant> resultRestaurants = Restaurant.GetAll();
+      List<Restaurant> testRestaurantList = new List<Restaurant> {testRestaurant2};
+
+      //Assert
+      Assert.Equal(testCuisineList, resultCuisine);
+      Assert.Equal(testRestaurantList, resultRestaurants);
+    }
 
     public void Dispose()
     {
